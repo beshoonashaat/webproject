@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Form</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1 id="formTitle">Add User</h1>
+  <form id="userForm">
+    <input type="hidden" id="userId" />
+    <label>Name: <input type="text" id="name" required /></label><br />
+    <label>Email: <input type="email" id="email" required /></label><br />
+    <button type="submit">Save</button>
+  </form>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+
+    if (id !== null) {
+      const user = users.find(u => u.id == id);
+      if (user) {
+        document.getElementById('formTitle').innerText = 'Update User';
+        document.getElementById('userId').value = user.id;
+        document.getElementById('name').value = user.name;
+        document.getElementById('email').value = user.email;
+      }
+    }
+
+    document.getElementById('userForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const userId = document.getElementById('userId').value;
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+
+      let updatedUsers = [...users];
+
+      if (userId) {
+        const index = updatedUsers.findIndex(u => u.id == userId);
+        updatedUsers[index] = { id: Number(userId), name, email };
+      } else {
+        const newId = Date.now();
+        updatedUsers.push({ id: newId, name, email });
+      }
+
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>
